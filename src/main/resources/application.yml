@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: Jfrog-Exercise
+server:
+  port: 8080
+jfrog:
+  url: ${JFROG_URL}
+  login: ${JFROG_LOGIN}
+  password: ${JFROG_PASSWORD}
