@@ -1,5 +1,10 @@
 // Scripted Pipeline with stages
-node {
+ pipeline {
+ environment {
+         //Use Pipeline Utility Steps plugin to read information from pom.xml into env variables
+         IMAGE = 'Jfrog_exercise'
+         VERSION = semver().getVersion()
+     }
   stage('Source') { // Get code
     // get code from our Git repository
     git 'https://github.com/rbentaarit/jfrog-exercise'
@@ -18,7 +23,13 @@ node {
     }
 
   stage ('docker build publish'){
-    sh "'docker build -t Jfrog_exercise .'"
+        when {
+                  branch 'master'
+              }
+                sh """
+                 docker build -t ${IMAGE} .
+                 docker tag ${IMAGE} ${IMAGE}:${VERSION}
+                """
 
         // Step 1: Obtain an Artifactiry instance, configured in Manage Jenkins --> Configure System:
         def server = Artifactory.server '<ArtifactoryServerID>'
@@ -28,15 +39,10 @@ node {
 
         // Step 3: Push the image to Artifactory.
         // Make sure that <artifactoryDockerRegistry> is configured to reference <targetRepo> Artifactory repository. In case it references a different repository, your build will fail with "Could not find manifest.json in Artifactory..." following the push.
-        def buildInfo = rtDocker.push '<artifactoryDockerRegistry>/hello-world:latest', '<targetRepo>'
+        def buildInfo = rtDocker.push '<artifactoryDockerRegistry>/${IMAGE}:${VERSION}', '<targetRepo>'
 
         // Step 4: Publish the build-info to Artifactory:
         server.publishBuildInfo buildInfo
-    }
-
-    stage ('build status'){
-
-        sh "'echo build pass'"
     }
 }
 
