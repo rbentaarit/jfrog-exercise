@@ -1,6 +1,6 @@
 # jfrog-exercise
 
-This project consists of retrieving finding the most popular and the 2nd most popular jar (binary) file in a repository that’s part of JFrog Artifactory.
+This project consists of finding the most popular and the 2nd most popular jar (binary) file in a repository that’s part of JFrog Artifactory.
 
 This is a Spring BOOT REST API
 
